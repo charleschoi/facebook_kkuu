@@ -1,12 +1,15 @@
 class HomeController < ApplicationController
   def index
+  end
+
+  def analyze
     #페이스북 엑세스 토큰이 없을 경우 화면 보여주지 않기
     return if params[:code].nil?
 
     #페이스북 앱 설정
     app_id = "523945371055601"
     app_secret = "8c3f4560ac9a92c6c1f2e5d343976baa"
-    callback_url = "http://jk1804.com/home/index"
+    callback_url = "http://jk1804.com/home/analyze"
 
     #페이스북 연동
     @oauth = Koala::Facebook::OAuth.new(app_id, app_secret, callback_url)
@@ -41,17 +44,11 @@ class HomeController < ApplicationController
       @kk_cnt += c.scan(/ㅋ|ㅎ/).count
     end
     @messages.each do |m|
-      @kk_cnt += m.scan(/ㅜ|ㅠ/).count
+      @uu_cnt += m.scan(/ㅜ|ㅠ/).count
     end
     @comments.each do |c|
-      @kk_cnt += c.scan(/ㅜ|ㅠ/).count
+      @uu_cnt += c.scan(/ㅜ|ㅠ/).count
     end
 
-  end
-
-  def laugh
-  end
-
-  def sorrow
   end
 end
