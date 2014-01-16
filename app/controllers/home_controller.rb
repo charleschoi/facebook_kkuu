@@ -12,43 +12,47 @@ class HomeController < ApplicationController
     callback_url = "http://jk1804.com/home/analyze"
 
     #페이스북 연동
-    @oauth = Koala::Facebook::OAuth.new(app_id, app_secret, callback_url)
-    access_token = @oauth.get_access_token(params[:code])
+    oauth = Koala::Facebook::OAuth.new(app_id, app_secret, callback_url)
+    access_token = oauth.get_access_token(params[:code])
 
     #페이스북 feed 긁어오기
-    @graph = Koala::Facebook::API.new(access_token)
-    feed = @graph.get_connections("me", "feed")
+    graph = Koala::Facebook::API.new(access_token)
+    feed = graph.get_connections("me", "feed")
 
     #포스트와 코멘트를 담을 배열 선언
-    @messages = Array.new
-    @comments = Array.new
+    messages = Array.new
+    comments = Array.new
     @kk_cnt = 0
     @uu_cnt = 0
+
+    #최고의 순간을 담을 해쉬 선언
+    @top_kk = Hash.new(count: 0, id: 0, message: "")
+    @top_uu = Hash.new(count: 0, id: 0, message: "")
 
     #feed가 없을때까지 다음 feed를 모두 검색하여 포스트 내용과 코멘트 내용을 배열에 넣기
     while !feed.nil?
       feed.each do |f|
-        @messages << f["message"] if !f["message"].nil?
+        messages << f["message"] if !f["message"].nil?
         if !f["comments"].nil?
           f["comments"]["data"].each do |c|
-           @comments << c["message"] if !c["message"].nil?
+           comments << c["message"] if !c["message"].nil?
           end
         end
       end
       feed = feed.next_page
     end
-    @messages.each do |m|
+    #feed와 그 코멘트에 있는 "ㅋ"와 "ㅎ", "ㅠ", "ㅜ"의 갯수를 세기
+    messages.each do |m|
       @kk_cnt += m.scan(/ㅋ|ㅎ/).count
     end
-    @comments.each do |c|
+    comments.each do |c|
       @kk_cnt += c.scan(/ㅋ|ㅎ/).count
     end
-    @messages.each do |m|
+    messages.each do |m|
       @uu_cnt += m.scan(/ㅜ|ㅠ/).count
     end
-    @comments.each do |c|
+    comments.each do |c|
       @uu_cnt += c.scan(/ㅜ|ㅠ/).count
     end
-
   end
 end
