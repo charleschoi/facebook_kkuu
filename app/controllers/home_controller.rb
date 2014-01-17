@@ -42,8 +42,8 @@ class HomeController < ApplicationController
           f["comments"]["data"].each do |c|
             kk_count = c["message"].scan(/ㅋ|ㅎ/).count unless c["message"].nil?
             uu_count = c["message"].scan(/ㅠ|ㅜ/).count unless c["message"].nil?
-            @top_kk = {:count => kk_count, :id => f["id"], :message => f["message"], :object => f.inspect} if @top_kk[:count] < kk_count
-            @top_uu = {:count => uu_count, :id => f["id"], :message => f["message"], :object => f.inspect} if @top_uu[:count] < uu_count
+            @top_kk = {:count => kk_count, :id => f["id"], :message => c["message"], :object => f.inspect} if @top_kk[:count] < kk_count
+            @top_uu = {:count => uu_count, :id => f["id"], :message => c["message"], :object => f.inspect} if @top_uu[:count] < uu_count
           end
         end
       end
