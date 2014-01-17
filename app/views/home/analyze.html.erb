@@ -1,3 +1,9 @@
 <a href="http://jk1804.com">HOME으로 가기</a><br>
-<%="내 주변의 웃음들 : #{@kk_cnt}" if !@kk_cnt.nil?%><br>
-<%="내 주변의 슬픔들 : #{@uu_cnt}" if !@uu_cnt.nil?%>
+<%="내 주변의 웃음들 : #{@kk_total_count}" if !@kk_total_count.nil?%><br>
+<%="내 주변의 슬픔들 : #{@uu_total_count}" if !@uu_total_count.nil?%><br>
+<%="최고로 웃었던 글 : #{@top_kk[:message]}, 갯수: #{@top_kk[:count]}, id : #{@top_kk[:id]}"%>
+<a href="http://www.facebook.com/<%=@top_kk[:id]%>">글 보기</a><br>
+<%="최고로 슬픈 글 : #{@top_uu[:message]}, 갯수: #{@top_uu[:count]}, id : #{@top_uu[:id]}"%>
+<a href="http://www.facebook.com/<%=@top_uu[:id]%>">글 보기</a>
+<%=@top_kk[:object]%>
+<%=@top_uu[:object]%>
