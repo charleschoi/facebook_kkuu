@@ -26,24 +26,31 @@ class HomeController < ApplicationController
     #최고의 순간을 담을 해쉬 선언
     @top_kk = {count: 0, id: 0, message: ""}
     @top_uu = {count: 0, id: 0, message: ""}
+    @top_kkuu = {count: 0, id: 0, message: ""}
 
     #feed가 없을때까지 다음 feed를 모두 검색하여 포스트 내용과 코멘트 내용을 배열에 넣기
     while !feed.nil?
       feed.each do |f|
         kk_count = 0
         uu_count = 0
+        kkuu_count = 0
         kk_count = f["message"].scan(/ㅋ|ㅎ/).count unless f["message"].nil?
         uu_count = f["message"].scan(/ㅠ|ㅜ/).count unless f["message"].nil?
-        @top_kk = {:count => kk_count, :id => f["id"], :message => f["message"], :object => f.inspect} if @top_kk[:count] < kk_count
-        @top_uu = {:count => uu_count, :id => f["id"], :message => f["message"], :object => f.inspect} if @top_uu[:count] < uu_count
+        kkuu_count = f["message"].scan(/ㅋ|ㅎ|ㅠ|ㅜ/).count unless f["message"].nil?
+        @top_kk = {:count => kk_count, :id => f["id"], :message => f["message"]} if @top_kk[:count] < kk_count
+        @top_uu = {:count => uu_count, :id => f["id"], :message => f["message"]} if @top_uu[:count] < uu_count
+        @top_kkuu = {:count => kkuu_count, :id => f["id"], :message => f["message"]} if @top_kkuu[:count]/((@top_kk[:count] - @top_uu[:count]).abs + 1) < kkuu_count/((kk_count - uu_count).abs + 1)
         @kk_total_count += kk_count
         @uu_total_count += uu_count
         unless f["comments"].nil?
           f["comments"]["data"].each do |c|
             kk_count = c["message"].scan(/ㅋ|ㅎ/).count unless c["message"].nil?
             uu_count = c["message"].scan(/ㅠ|ㅜ/).count unless c["message"].nil?
-            @top_kk = {:count => kk_count, :id => f["id"], :message => c["message"], :object => f.inspect} if @top_kk[:count] < kk_count
-            @top_uu = {:count => uu_count, :id => f["id"], :message => c["message"], :object => f.inspect} if @top_uu[:count] < uu_count
+            @top_kk = {:count => kk_count, :id => f["id"], :message => c["message"]} if @top_kk[:count] < kk_count
+            @top_uu = {:count => uu_count, :id => f["id"], :message => c["message"]} if @top_uu[:count] < uu_count
+            @top_kkuu = {:count => kkuu_count, :id => f["id"], :message => f["message"]} if @top_kkuu[:count]/((@top_kk[:count] - @top_uu[:count]).abs + 1) < kkuu_count/((kk_count - uu_count + 1).abs + 1)
+            @kk_total_count += kk_count
+            @uu_total_count += uu_count
           end
         end
       end
